@@ -7,25 +7,71 @@ class TakeIt extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'TakeIt',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('TakeIt'),
-        ),
-        body: Center(
-          child: Text('Write your first note'),
-        ),
-      ),
+      home: NoteList(),
     );
   }
 }
 
-/*
 class NoteList extends StatefulWidget {
-
   @override
-  State createState() => NoteListState()
+  State createState() => NoteListState();
 }
 
-class NoteListState extends State<String> {
+class NoteListState extends State<NoteList> {
+  final _notes = <String>[];
+  final _biggerFont  = const TextStyle(fontSize: 18.0);
 
-}*/
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('TakeIt'),
+      ),
+      body: _buildList(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _takeNote,
+        tooltip: 'Take a Note',
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+  
+  Widget _buildList() {
+    return ListView.builder(
+      itemBuilder: (context, index) {
+        if(index < _notes.length) {
+          return _buildRow(_notes[index]);
+        }
+      },
+    );
+  } // _buildList
+
+  Widget _buildRow(String note) {
+    return Column(
+      children: <Widget>[
+        ListTile(
+          title: Text(
+            note,
+            style: _biggerFont,
+          ),
+        ),
+        Divider(
+          color: Colors.grey,
+        ),
+      ],
+    );
+
+    /*return ListTile(
+      title: Text(
+        note,
+        style: _biggerFont,
+      ),
+    );*/
+  } // _buildRow
+
+  void _takeNote() {
+    setState(() {
+      _notes.add('Sample Note');
+    });
+  }
+}
