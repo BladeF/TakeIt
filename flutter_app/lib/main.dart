@@ -40,13 +40,13 @@ class NoteListState extends State<NoteList> {
     return ListView.builder(
       itemBuilder: (context, index) {
         if(index < _notes.length) {
-          return _buildRow(_notes[index]);
+          return _buildRow(_notes[index], index);
         }
       },
     );
   } // _buildList
 
-  Widget _buildRow(String note) {
+  Widget _buildRow(String note, int index) {
     return Column(
       children: <Widget>[
         ListTile(
@@ -54,6 +54,9 @@ class NoteListState extends State<NoteList> {
             note,
             style: _biggerFont,
           ),
+          onLongPress: (){
+            _deleteNote(index);
+          },
         ),
         Divider(
           color: Colors.grey,
@@ -69,9 +72,40 @@ class NoteListState extends State<NoteList> {
     );*/
   } // _buildRow
 
-  void _takeNote() {
+  void _saveNote(String note) {
     setState(() {
-      _notes.add('Sample Note');
+      _notes.add(note);
     });
+  }
+
+  void _deleteNote(int index){
+    setState(() {
+      _notes.removeAt(index);
+    });
+  }
+  void _takeNote(){
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context){
+          return Scaffold(
+            appBar: AppBar(
+              title: Text("Create A New Note"),
+            ),
+            body: new TextField(
+              autofocus: true,
+              autocorrect: true,
+              onSubmitted: (val){
+                _saveNote(val);
+                Navigator.pop(context);
+              },
+              decoration: new InputDecoration(
+                hintText: 'Enter your new note',
+                contentPadding: const EdgeInsets.all(16.0)
+              ),
+            ),
+          );
+        }
+      )
+    );
   }
 }
