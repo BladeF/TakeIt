@@ -2,32 +2,31 @@ package com.bladefrisch.takeit;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
+import com.bladefrisch.takeit.adapter.NoteAdapter;
 import com.bladefrisch.takeit.data.entity.Note;
 import com.bladefrisch.takeit.data.viewmodel.NoteListVMFactory;
 import com.bladefrisch.takeit.data.viewmodel.NoteListViewModel;
 import com.bladefrisch.takeit.utils.InjectorUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.List;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-import android.view.View;
 
-import com.bladefrisch.takeit.adapter.NoteAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+    implements NoteAdapter.NoteClickListener {
 
     private RecyclerView               mRecyclerView;
     private NoteAdapter                mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private NoteListViewModel          mViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,12 +39,12 @@ public class MainActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new NoteAdapter();
+        mAdapter = new NoteAdapter(this);
         mRecyclerView.setAdapter(mAdapter);
 
         NoteListVMFactory factory   = InjectorUtils.provideCategoryVMFactory(getApplicationContext());
-        NoteListViewModel viewModel = ViewModelProviders.of(this, factory).get(NoteListViewModel.class);
-        viewModel.getNotes().observe(this, (@Nullable List<Note> notes) ->
+        mViewModel = ViewModelProviders.of(this, factory).get(NoteListViewModel.class);
+        mViewModel.getNotes().observe(this, (@Nullable List<Note> notes) ->
                 mAdapter.setDataset(notes)
         );
 
@@ -54,5 +53,10 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, AddNoteActivity.class);
             startActivity(intent);
         });
+    }
+
+    @Override
+    public void onNoteClick(Note note) {
+        mViewModel.deleteNote(note);
     }
 }

@@ -41,4 +41,10 @@ public class NoteRepository {
                 mNoteDao.addNote(note)
         );
     }
+
+    public void deleteNote(Note note) {
+        mExecutors.getDiskIO().execute( () ->
+                mNoteDao.deleteNote(note)
+        );
+    }
 }

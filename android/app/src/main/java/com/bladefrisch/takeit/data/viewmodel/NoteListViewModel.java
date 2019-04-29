@@ -20,4 +20,8 @@ public class NoteListViewModel extends ViewModel {
     public LiveData<List<Note>> getNotes() {
         return mNotes;
     }
+
+    public void deleteNote(Note note) {
+        mRepository.deleteNote(note);
+    }
 }

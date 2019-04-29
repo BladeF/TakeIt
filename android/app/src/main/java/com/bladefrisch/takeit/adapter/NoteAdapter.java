@@ -1,7 +1,5 @@
 package com.bladefrisch.takeit.adapter;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,21 +11,38 @@ import com.bladefrisch.takeit.data.entity.Note;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
 
     private List<Note> mDataset;
 
-    public static class NoteViewHolder extends RecyclerView.ViewHolder {
+    private final NoteClickListener mNoteClickListener;
+
+    public interface NoteClickListener {
+        void onNoteClick(Note note);
+    }
+
+    public class NoteViewHolder extends RecyclerView.ViewHolder
+        implements View.OnClickListener {
         public TextView noteText;
 
         public NoteViewHolder(View view) {
             super(view);
             noteText = view.findViewById(R.id.note_text);
+            view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            mNoteClickListener.onNoteClick(mDataset.get(getAdapterPosition()));
         }
     }
 
-    public NoteAdapter() {
-        mDataset = new ArrayList<>();
+    public NoteAdapter(NoteClickListener listener) {
+        mDataset           = new ArrayList<>();
+        mNoteClickListener = listener;
     }
 
     @NonNull
